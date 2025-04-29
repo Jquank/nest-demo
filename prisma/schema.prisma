@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  age   Int?
+  sex   Int?
+  roles Role[]
+}
+
+model LogReq {
+  id        Int      @id @default(autoincrement())
+  code      Int      @default(-1)
+  level     String? // "INFO" | "ERROR" | etc.
+  method    String?
+  path      String?
+  query     String?
+  body      String?
+  message   String
+  duration  String?
+  status    Int?
+  timestamp DateTime @default(now())
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  desc        String?
+  createTime  DateTime @default(now())
+  users       User[]
+  permissions Json?
+}
+
+model Board {
+  id             Int      @id @default(autoincrement())
+  title          String   @unique
+  desc           String?
+  createTime     DateTime @default(now())
+  creator        String?
+  indicatorCount Int?
+  cards          Card[]
+}
+
+model Card {
+  id         Int      @id @default(autoincrement())
+  title      String
+  createTime DateTime @default(now())
+  type       String   @default("50") // 图表卡片类型: 50 代表数字图
+  value      String // 表头总数
+  posi       Json? // 卡片位置信息
+  config     Json? // 卡片配置信息
+  data       Json? // 卡片数据信息
+  Board      Board?   @relation(fields: [boardId], references: [id])
+  boardId    Int?
+}
