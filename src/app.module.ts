@@ -7,18 +7,19 @@ import { SharedModule } from './shared/shared.module';
 import { LoggerMiddleware } from './common/middleware/logger';
 import { PrismaModule } from './prisma/prisma.module';
 import { BoardModule } from './board/board.module';
-// import { AllExceptionsFilter } from './common/filter/all-exception.filter';
-// import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/filter/all-exception.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [UserModule, RoleModule, SharedModule, PrismaModule, BoardModule],
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: AllExceptionsFilter,
-    // },
+    {
+      provide: APP_FILTER,
+      // 全局过滤器
+      useClass: AllExceptionsFilter,
+    },
   ],
 })
 export class AppModule implements NestModule {

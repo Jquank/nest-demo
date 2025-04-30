@@ -3,10 +3,10 @@ import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
-  HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+// import { Prisma } from '@generate/client';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -18,18 +18,30 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
+    const status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let message = 'Internal server error';
+    const name = exception?.constructor.name || '';
 
-    const httpStatus =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    if (typeof exception === 'string') {
+      message = exception;
+    } else if (
+      ['PrismaClientValidationError', 'PrismaClientKnownRequestError'].includes(
+        name,
+      )
+    ) {
+      message = JSON.stringify(exception);
+    } else {
+      /** empty */
+    }
+
+    // ...
 
     const responseBody = {
-      statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
-      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      code: -1,
+      status,
+      message,
     };
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    httpAdapter.reply(ctx.getResponse(), responseBody, status);
   }
 }

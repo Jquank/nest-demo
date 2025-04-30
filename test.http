@@ -21,7 +21,7 @@
 # GET http://localhost:3000/user/ex5?id=1&ip=9 HTTP/1.1
 
 
-GET http://localhost:3000/board/2 HTTP/1.1
+
 
 
 # POST http://localhost:3000/user HTTP/1.1
@@ -58,22 +58,56 @@ GET http://localhost:3000/board/2 HTTP/1.1
 #   "desc": "测试用22222"
 # }
 
+# GET http://localhost:3000/board/2 HTTP/1.1
 
+PUT http://localhost:3000/board HTTP/1.1
+Content-Type: application/json
 
-# PUT http://localhost:3000/board HTTP/1.1
-# Content-Type: application/json
-
-# {
-#   "desc": "测试用111111111?",
-#   "cards": [{
-#     "id": 4,
-#     "title": "卡片1111111111?",
-#     "posi": "whxyi",
-#     "data": "111啊啊"
-#   }, {
-#     "title": "卡片333333333333333",
-#     "posi": "whxyi",
-#     "data": "333",
-#     "xxx": "xxx"
-#   }]
-# }
+{
+  "id": 1,
+  "title": "看板11",
+  "desc": "测试用111111111?",
+  "cards": [
+    {
+      "type": "50",
+      "title": "当日销售量",
+      "value": "100.00",
+      "x": 0,
+      "posi": {"x":0,"y":0,"w":1,"h":1,"i":"0"},
+      "data": {"up":"10%","down":"20%"},
+      "config": {"unit":"个"}
+    },
+    {
+      "id": 4,
+      "type": "1",
+      "title": "商品详情页近7天访问量",
+      "posi": {"x":0,"y":1,"w":2,"h":2,"i":"1"},
+      "data": {
+        "legendData": ["2022-01", "2022-02", "2022-03"],
+        "xAxisData": ["app", "门店", "京东", "美团"],
+        "yAxisData": [
+          { "2022-01": 43.3, "2022-02": 85.8, "2022-03": 93.7 },
+          { "2022-01": 83.1, "2022-02": 73.4, "2022-03": 55.1 },
+          { "2022-01": 72.4, "2022-02": 53.9, "2022-03": 39.1 },
+          { "2022-01": 72.4, "2022-02": 53.9, "2022-03": 39.1 }
+        ]
+      },
+      "config": {"unit": "千次"}
+    }, 
+    {
+      "type": "3",
+      "title": "商品详情页近7天访问量",
+      "posi": {"x":0,"y":3,"w":2,"h":2,"i":"2"},
+      "data": {
+        "legendData": ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
+        "xAxisData": ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+        "yAxisData": [
+          [120, 132, 101, 134, 90, 230, 210],
+          [220, 182, 191, 234, 290, 330, 310],
+          [150, 232, 201, 154, 190, 330, 410]
+        ]
+      },
+      "config": {}
+    }
+  ]
+}
