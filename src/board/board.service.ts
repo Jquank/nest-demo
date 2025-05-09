@@ -3,23 +3,36 @@ import { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 import { CardDto } from './dto/card.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { pick } from 'lodash-es';
+import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class BoardService {
   constructor(private prisma: PrismaService) {}
 
   async createBoard(createBoardDto: CreateBoardDto) {
-    return await this.prisma.board.create({
+    await this.prisma.board.create({
       data: {
         ...createBoardDto,
       },
     });
+    return null;
   }
 
   async deleteBoard(id: number) {
-    return await this.prisma.board.delete({
+    const bindCardIds = await this.prisma.card.findMany({
+      where: { boardId: id },
+      select: { id: true },
+    });
+    const deleteCards = this.prisma.card.deleteMany({
+      where: { id: { in: bindCardIds.map((c) => c.id) } },
+    });
+    const deletesBoard = this.prisma.board.delete({
       where: { id },
     });
+    await this.prisma.$transaction([deleteCards, deletesBoard]);
+    return null;
   }
 
   /** 处理Card表的更新 */
@@ -71,6 +84,16 @@ export class BoardService {
 
   async updateBoard(updateBoardDto: UpdateBoardDto) {
     const { id, cards, ...boardData } = updateBoardDto;
+
+    const dtoInstance = plainToInstance(CardDto, cards);
+    const errors = await validate(dtoInstance);
+    console.log(errors);
+
+    // 排除cards非dto字段，todo：未找到自动过滤的办法
+    const _cards = cards?.map(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      (c) => pick(c, Object.keys(new CardDto())) as CardDto,
+    );
     if (!id) throw new HttpException('id不能为空', 400);
     return this.prisma.$transaction(async (tx) => {
       // 1. 更新board
@@ -79,8 +102,8 @@ export class BoardService {
         data: boardData,
       });
       // 2. 如果有cards数据，处理cards
-      if (cards?.length) {
-        await this.handleCardUpdate(tx, id, cards);
+      if (_cards?.length) {
+        await this.handleCardUpdate(tx, id, _cards);
       }
       return null;
     });

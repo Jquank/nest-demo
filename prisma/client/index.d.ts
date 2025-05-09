@@ -5288,6 +5288,7 @@ export namespace Prisma {
     title: string | null
     createTime: Date | null
     type: string | null
+    value: string | null
     boardId: number | null
   }
 
@@ -5296,6 +5297,7 @@ export namespace Prisma {
     title: string | null
     createTime: Date | null
     type: string | null
+    value: string | null
     boardId: number | null
   }
 
@@ -5304,6 +5306,7 @@ export namespace Prisma {
     title: number
     createTime: number
     type: number
+    value: number
     posi: number
     config: number
     data: number
@@ -5327,6 +5330,7 @@ export namespace Prisma {
     title?: true
     createTime?: true
     type?: true
+    value?: true
     boardId?: true
   }
 
@@ -5335,6 +5339,7 @@ export namespace Prisma {
     title?: true
     createTime?: true
     type?: true
+    value?: true
     boardId?: true
   }
 
@@ -5343,6 +5348,7 @@ export namespace Prisma {
     title?: true
     createTime?: true
     type?: true
+    value?: true
     posi?: true
     config?: true
     data?: true
@@ -5441,6 +5447,7 @@ export namespace Prisma {
     title: string
     createTime: Date
     type: string
+    value: string
     posi: JsonValue | null
     config: JsonValue | null
     data: JsonValue | null
@@ -5471,6 +5478,7 @@ export namespace Prisma {
     title?: boolean
     createTime?: boolean
     type?: boolean
+    value?: boolean
     posi?: boolean
     config?: boolean
     data?: boolean
@@ -5485,13 +5493,14 @@ export namespace Prisma {
     title?: boolean
     createTime?: boolean
     type?: boolean
+    value?: boolean
     posi?: boolean
     config?: boolean
     data?: boolean
     boardId?: boolean
   }
 
-  export type CardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "createTime" | "type" | "posi" | "config" | "data" | "boardId", ExtArgs["result"]["card"]>
+  export type CardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "createTime" | "type" | "value" | "posi" | "config" | "data" | "boardId", ExtArgs["result"]["card"]>
   export type CardInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Board?: boolean | Card$BoardArgs<ExtArgs>
   }
@@ -5506,6 +5515,7 @@ export namespace Prisma {
       title: string
       createTime: Date
       type: string
+      value: string
       posi: Prisma.JsonValue | null
       config: Prisma.JsonValue | null
       data: Prisma.JsonValue | null
@@ -5884,6 +5894,7 @@ export namespace Prisma {
     readonly title: FieldRef<"Card", 'String'>
     readonly createTime: FieldRef<"Card", 'DateTime'>
     readonly type: FieldRef<"Card", 'String'>
+    readonly value: FieldRef<"Card", 'String'>
     readonly posi: FieldRef<"Card", 'Json'>
     readonly config: FieldRef<"Card", 'Json'>
     readonly data: FieldRef<"Card", 'Json'>
@@ -6338,6 +6349,7 @@ export namespace Prisma {
     title: 'title',
     createTime: 'createTime',
     type: 'type',
+    value: 'value',
     posi: 'posi',
     config: 'config',
     data: 'data',
@@ -6428,7 +6440,8 @@ export namespace Prisma {
 
   export const CardOrderByRelevanceFieldEnum: {
     title: 'title',
-    type: 'type'
+    type: 'type',
+    value: 'value'
   };
 
   export type CardOrderByRelevanceFieldEnum = (typeof CardOrderByRelevanceFieldEnum)[keyof typeof CardOrderByRelevanceFieldEnum]
@@ -6756,6 +6769,7 @@ export namespace Prisma {
     title?: StringFilter<"Card"> | string
     createTime?: DateTimeFilter<"Card"> | Date | string
     type?: StringFilter<"Card"> | string
+    value?: StringFilter<"Card"> | string
     posi?: JsonNullableFilter<"Card">
     config?: JsonNullableFilter<"Card">
     data?: JsonNullableFilter<"Card">
@@ -6768,6 +6782,7 @@ export namespace Prisma {
     title?: SortOrder
     createTime?: SortOrder
     type?: SortOrder
+    value?: SortOrder
     posi?: SortOrderInput | SortOrder
     config?: SortOrderInput | SortOrder
     data?: SortOrderInput | SortOrder
@@ -6784,6 +6799,7 @@ export namespace Prisma {
     title?: StringFilter<"Card"> | string
     createTime?: DateTimeFilter<"Card"> | Date | string
     type?: StringFilter<"Card"> | string
+    value?: StringFilter<"Card"> | string
     posi?: JsonNullableFilter<"Card">
     config?: JsonNullableFilter<"Card">
     data?: JsonNullableFilter<"Card">
@@ -6796,6 +6812,7 @@ export namespace Prisma {
     title?: SortOrder
     createTime?: SortOrder
     type?: SortOrder
+    value?: SortOrder
     posi?: SortOrderInput | SortOrder
     config?: SortOrderInput | SortOrder
     data?: SortOrderInput | SortOrder
@@ -6815,6 +6832,7 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Card"> | string
     createTime?: DateTimeWithAggregatesFilter<"Card"> | Date | string
     type?: StringWithAggregatesFilter<"Card"> | string
+    value?: StringWithAggregatesFilter<"Card"> | string
     posi?: JsonNullableWithAggregatesFilter<"Card">
     config?: JsonNullableWithAggregatesFilter<"Card">
     data?: JsonNullableWithAggregatesFilter<"Card">
@@ -7098,6 +7116,7 @@ export namespace Prisma {
     title: string
     createTime?: Date | string
     type?: string
+    value: string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7109,6 +7128,7 @@ export namespace Prisma {
     title: string
     createTime?: Date | string
     type?: string
+    value: string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7119,6 +7139,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7130,6 +7151,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7141,6 +7163,7 @@ export namespace Prisma {
     title: string
     createTime?: Date | string
     type?: string
+    value: string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7151,6 +7174,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7161,6 +7185,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -7593,6 +7618,7 @@ export namespace Prisma {
     title?: SortOrder
     createTime?: SortOrder
     type?: SortOrder
+    value?: SortOrder
     posi?: SortOrder
     config?: SortOrder
     data?: SortOrder
@@ -7609,6 +7635,7 @@ export namespace Prisma {
     title?: SortOrder
     createTime?: SortOrder
     type?: SortOrder
+    value?: SortOrder
     boardId?: SortOrder
   }
 
@@ -7617,6 +7644,7 @@ export namespace Prisma {
     title?: SortOrder
     createTime?: SortOrder
     type?: SortOrder
+    value?: SortOrder
     boardId?: SortOrder
   }
 
@@ -8075,6 +8103,7 @@ export namespace Prisma {
     title: string
     createTime?: Date | string
     type?: string
+    value: string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -8085,6 +8114,7 @@ export namespace Prisma {
     title: string
     createTime?: Date | string
     type?: string
+    value: string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -8124,6 +8154,7 @@ export namespace Prisma {
     title?: StringFilter<"Card"> | string
     createTime?: DateTimeFilter<"Card"> | Date | string
     type?: StringFilter<"Card"> | string
+    value?: StringFilter<"Card"> | string
     posi?: JsonNullableFilter<"Card">
     config?: JsonNullableFilter<"Card">
     data?: JsonNullableFilter<"Card">
@@ -8231,6 +8262,7 @@ export namespace Prisma {
     title: string
     createTime?: Date | string
     type?: string
+    value: string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -8240,6 +8272,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -8250,6 +8283,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
@@ -8260,6 +8294,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
     posi?: NullableJsonNullValueInput | InputJsonValue
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue

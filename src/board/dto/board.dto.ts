@@ -1,13 +1,12 @@
 // import { PartialType } from '@nestjs/swagger';
 import {
-  IsOptional,
   IsNotEmpty,
   IsString,
   IsNumber,
   IsArray,
+  IsOptional,
 } from 'class-validator';
 import { CardDto } from './card.dto';
-
 export class BoardDto {
   @IsNotEmpty()
   @IsString()

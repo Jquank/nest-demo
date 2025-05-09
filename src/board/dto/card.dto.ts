@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsJSON } from 'class-validator';
 export class CardDto {
   @IsNotEmpty()
   @IsNumber()
@@ -16,15 +16,12 @@ export class CardDto {
   @IsString()
   type: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsJSON()
   posi: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsJSON()
   config: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsJSON()
   data: string;
 }
