@@ -162,7 +162,11 @@ exports.Prisma.CardScalarFieldEnum = {
   createTime: 'createTime',
   type: 'type',
   value: 'value',
-  posi: 'posi',
+  x: 'x',
+  y: 'y',
+  w: 'w',
+  h: 'h',
+  i: 'i',
   config: 'config',
   data: 'data',
   boardId: 'boardId'
@@ -223,7 +227,8 @@ exports.Prisma.BoardOrderByRelevanceFieldEnum = {
 exports.Prisma.CardOrderByRelevanceFieldEnum = {
   title: 'title',
   type: 'type',
-  value: 'value'
+  value: 'value',
+  i: 'i'
 };
 
 

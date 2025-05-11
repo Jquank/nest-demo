@@ -5275,11 +5275,19 @@ export namespace Prisma {
 
   export type CardAvgAggregateOutputType = {
     id: number | null
+    x: number | null
+    y: number | null
+    w: number | null
+    h: number | null
     boardId: number | null
   }
 
   export type CardSumAggregateOutputType = {
     id: number | null
+    x: number | null
+    y: number | null
+    w: number | null
+    h: number | null
     boardId: number | null
   }
 
@@ -5289,6 +5297,11 @@ export namespace Prisma {
     createTime: Date | null
     type: string | null
     value: string | null
+    x: number | null
+    y: number | null
+    w: number | null
+    h: number | null
+    i: string | null
     boardId: number | null
   }
 
@@ -5298,6 +5311,11 @@ export namespace Prisma {
     createTime: Date | null
     type: string | null
     value: string | null
+    x: number | null
+    y: number | null
+    w: number | null
+    h: number | null
+    i: string | null
     boardId: number | null
   }
 
@@ -5307,7 +5325,11 @@ export namespace Prisma {
     createTime: number
     type: number
     value: number
-    posi: number
+    x: number
+    y: number
+    w: number
+    h: number
+    i: number
     config: number
     data: number
     boardId: number
@@ -5317,11 +5339,19 @@ export namespace Prisma {
 
   export type CardAvgAggregateInputType = {
     id?: true
+    x?: true
+    y?: true
+    w?: true
+    h?: true
     boardId?: true
   }
 
   export type CardSumAggregateInputType = {
     id?: true
+    x?: true
+    y?: true
+    w?: true
+    h?: true
     boardId?: true
   }
 
@@ -5331,6 +5361,11 @@ export namespace Prisma {
     createTime?: true
     type?: true
     value?: true
+    x?: true
+    y?: true
+    w?: true
+    h?: true
+    i?: true
     boardId?: true
   }
 
@@ -5340,6 +5375,11 @@ export namespace Prisma {
     createTime?: true
     type?: true
     value?: true
+    x?: true
+    y?: true
+    w?: true
+    h?: true
+    i?: true
     boardId?: true
   }
 
@@ -5349,7 +5389,11 @@ export namespace Prisma {
     createTime?: true
     type?: true
     value?: true
-    posi?: true
+    x?: true
+    y?: true
+    w?: true
+    h?: true
+    i?: true
     config?: true
     data?: true
     boardId?: true
@@ -5448,7 +5492,11 @@ export namespace Prisma {
     createTime: Date
     type: string
     value: string
-    posi: JsonValue | null
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config: JsonValue | null
     data: JsonValue | null
     boardId: number | null
@@ -5479,7 +5527,11 @@ export namespace Prisma {
     createTime?: boolean
     type?: boolean
     value?: boolean
-    posi?: boolean
+    x?: boolean
+    y?: boolean
+    w?: boolean
+    h?: boolean
+    i?: boolean
     config?: boolean
     data?: boolean
     boardId?: boolean
@@ -5494,13 +5546,17 @@ export namespace Prisma {
     createTime?: boolean
     type?: boolean
     value?: boolean
-    posi?: boolean
+    x?: boolean
+    y?: boolean
+    w?: boolean
+    h?: boolean
+    i?: boolean
     config?: boolean
     data?: boolean
     boardId?: boolean
   }
 
-  export type CardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "createTime" | "type" | "value" | "posi" | "config" | "data" | "boardId", ExtArgs["result"]["card"]>
+  export type CardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "createTime" | "type" | "value" | "x" | "y" | "w" | "h" | "i" | "config" | "data" | "boardId", ExtArgs["result"]["card"]>
   export type CardInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Board?: boolean | Card$BoardArgs<ExtArgs>
   }
@@ -5516,7 +5572,11 @@ export namespace Prisma {
       createTime: Date
       type: string
       value: string
-      posi: Prisma.JsonValue | null
+      x: number
+      y: number
+      w: number
+      h: number
+      i: string
       config: Prisma.JsonValue | null
       data: Prisma.JsonValue | null
       boardId: number | null
@@ -5895,7 +5955,11 @@ export namespace Prisma {
     readonly createTime: FieldRef<"Card", 'DateTime'>
     readonly type: FieldRef<"Card", 'String'>
     readonly value: FieldRef<"Card", 'String'>
-    readonly posi: FieldRef<"Card", 'Json'>
+    readonly x: FieldRef<"Card", 'Int'>
+    readonly y: FieldRef<"Card", 'Int'>
+    readonly w: FieldRef<"Card", 'Int'>
+    readonly h: FieldRef<"Card", 'Int'>
+    readonly i: FieldRef<"Card", 'String'>
     readonly config: FieldRef<"Card", 'Json'>
     readonly data: FieldRef<"Card", 'Json'>
     readonly boardId: FieldRef<"Card", 'Int'>
@@ -6350,7 +6414,11 @@ export namespace Prisma {
     createTime: 'createTime',
     type: 'type',
     value: 'value',
-    posi: 'posi',
+    x: 'x',
+    y: 'y',
+    w: 'w',
+    h: 'h',
+    i: 'i',
     config: 'config',
     data: 'data',
     boardId: 'boardId'
@@ -6441,7 +6509,8 @@ export namespace Prisma {
   export const CardOrderByRelevanceFieldEnum: {
     title: 'title',
     type: 'type',
-    value: 'value'
+    value: 'value',
+    i: 'i'
   };
 
   export type CardOrderByRelevanceFieldEnum = (typeof CardOrderByRelevanceFieldEnum)[keyof typeof CardOrderByRelevanceFieldEnum]
@@ -6770,7 +6839,11 @@ export namespace Prisma {
     createTime?: DateTimeFilter<"Card"> | Date | string
     type?: StringFilter<"Card"> | string
     value?: StringFilter<"Card"> | string
-    posi?: JsonNullableFilter<"Card">
+    x?: IntFilter<"Card"> | number
+    y?: IntFilter<"Card"> | number
+    w?: IntFilter<"Card"> | number
+    h?: IntFilter<"Card"> | number
+    i?: StringFilter<"Card"> | string
     config?: JsonNullableFilter<"Card">
     data?: JsonNullableFilter<"Card">
     boardId?: IntNullableFilter<"Card"> | number | null
@@ -6783,7 +6856,11 @@ export namespace Prisma {
     createTime?: SortOrder
     type?: SortOrder
     value?: SortOrder
-    posi?: SortOrderInput | SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
+    i?: SortOrder
     config?: SortOrderInput | SortOrder
     data?: SortOrderInput | SortOrder
     boardId?: SortOrderInput | SortOrder
@@ -6800,7 +6877,11 @@ export namespace Prisma {
     createTime?: DateTimeFilter<"Card"> | Date | string
     type?: StringFilter<"Card"> | string
     value?: StringFilter<"Card"> | string
-    posi?: JsonNullableFilter<"Card">
+    x?: IntFilter<"Card"> | number
+    y?: IntFilter<"Card"> | number
+    w?: IntFilter<"Card"> | number
+    h?: IntFilter<"Card"> | number
+    i?: StringFilter<"Card"> | string
     config?: JsonNullableFilter<"Card">
     data?: JsonNullableFilter<"Card">
     boardId?: IntNullableFilter<"Card"> | number | null
@@ -6813,7 +6894,11 @@ export namespace Prisma {
     createTime?: SortOrder
     type?: SortOrder
     value?: SortOrder
-    posi?: SortOrderInput | SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
+    i?: SortOrder
     config?: SortOrderInput | SortOrder
     data?: SortOrderInput | SortOrder
     boardId?: SortOrderInput | SortOrder
@@ -6833,7 +6918,11 @@ export namespace Prisma {
     createTime?: DateTimeWithAggregatesFilter<"Card"> | Date | string
     type?: StringWithAggregatesFilter<"Card"> | string
     value?: StringWithAggregatesFilter<"Card"> | string
-    posi?: JsonNullableWithAggregatesFilter<"Card">
+    x?: IntWithAggregatesFilter<"Card"> | number
+    y?: IntWithAggregatesFilter<"Card"> | number
+    w?: IntWithAggregatesFilter<"Card"> | number
+    h?: IntWithAggregatesFilter<"Card"> | number
+    i?: StringWithAggregatesFilter<"Card"> | string
     config?: JsonNullableWithAggregatesFilter<"Card">
     data?: JsonNullableWithAggregatesFilter<"Card">
     boardId?: IntNullableWithAggregatesFilter<"Card"> | number | null
@@ -7117,7 +7206,11 @@ export namespace Prisma {
     createTime?: Date | string
     type?: string
     value: string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
     Board?: BoardCreateNestedOneWithoutCardsInput
@@ -7129,7 +7222,11 @@ export namespace Prisma {
     createTime?: Date | string
     type?: string
     value: string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
     boardId?: number | null
@@ -7140,7 +7237,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
     Board?: BoardUpdateOneWithoutCardsNestedInput
@@ -7152,7 +7253,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
     boardId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -7164,7 +7269,11 @@ export namespace Prisma {
     createTime?: Date | string
     type?: string
     value: string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
     boardId?: number | null
@@ -7175,7 +7284,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }
@@ -7186,7 +7299,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
     boardId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -7619,7 +7736,11 @@ export namespace Prisma {
     createTime?: SortOrder
     type?: SortOrder
     value?: SortOrder
-    posi?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
+    i?: SortOrder
     config?: SortOrder
     data?: SortOrder
     boardId?: SortOrder
@@ -7627,6 +7748,10 @@ export namespace Prisma {
 
   export type CardAvgOrderByAggregateInput = {
     id?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
     boardId?: SortOrder
   }
 
@@ -7636,6 +7761,11 @@ export namespace Prisma {
     createTime?: SortOrder
     type?: SortOrder
     value?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
+    i?: SortOrder
     boardId?: SortOrder
   }
 
@@ -7645,11 +7775,20 @@ export namespace Prisma {
     createTime?: SortOrder
     type?: SortOrder
     value?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
+    i?: SortOrder
     boardId?: SortOrder
   }
 
   export type CardSumOrderByAggregateInput = {
     id?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    w?: SortOrder
+    h?: SortOrder
     boardId?: SortOrder
   }
 
@@ -8104,7 +8243,11 @@ export namespace Prisma {
     createTime?: Date | string
     type?: string
     value: string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }
@@ -8115,7 +8258,11 @@ export namespace Prisma {
     createTime?: Date | string
     type?: string
     value: string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }
@@ -8155,7 +8302,11 @@ export namespace Prisma {
     createTime?: DateTimeFilter<"Card"> | Date | string
     type?: StringFilter<"Card"> | string
     value?: StringFilter<"Card"> | string
-    posi?: JsonNullableFilter<"Card">
+    x?: IntFilter<"Card"> | number
+    y?: IntFilter<"Card"> | number
+    w?: IntFilter<"Card"> | number
+    h?: IntFilter<"Card"> | number
+    i?: StringFilter<"Card"> | string
     config?: JsonNullableFilter<"Card">
     data?: JsonNullableFilter<"Card">
     boardId?: IntNullableFilter<"Card"> | number | null
@@ -8263,7 +8414,11 @@ export namespace Prisma {
     createTime?: Date | string
     type?: string
     value: string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x: number
+    y: number
+    w: number
+    h: number
+    i: string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }
@@ -8273,7 +8428,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }
@@ -8284,7 +8443,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }
@@ -8295,7 +8458,11 @@ export namespace Prisma {
     createTime?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     value?: StringFieldUpdateOperationsInput | string
-    posi?: NullableJsonNullValueInput | InputJsonValue
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    w?: IntFieldUpdateOperationsInput | number
+    h?: IntFieldUpdateOperationsInput | number
+    i?: StringFieldUpdateOperationsInput | string
     config?: NullableJsonNullValueInput | InputJsonValue
     data?: NullableJsonNullValueInput | InputJsonValue
   }

@@ -1,27 +1,62 @@
-import { IsNotEmpty, IsString, IsNumber, IsJSON } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
+import { Expose } from 'class-transformer';
 export class CardDto {
-  @IsNotEmpty()
+  @Expose()
+  @IsOptional()
   @IsNumber()
   id?: number;
 
+  @Expose()
   @IsNotEmpty()
   @IsString()
   title: string;
 
+  @Expose()
   @IsNotEmpty()
   @IsString()
   value: string;
 
+  @Expose()
   @IsNotEmpty()
   @IsString()
   type: string;
 
-  @IsJSON()
-  posi: string;
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  x: number;
 
-  @IsJSON()
-  config: string;
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  y: number;
 
-  @IsJSON()
-  data: string;
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  w: number;
+
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  h: number;
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  i: string;
+
+  @Expose()
+  @IsObject()
+  config: Record<string, any>;
+
+  @Expose()
+  @IsObject()
+  data: Record<string, any>;
 }

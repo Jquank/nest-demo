@@ -62,7 +62,11 @@ model Card {
   createTime DateTime @default(now())
   type       String   @default("50") // 图表卡片类型: 50 代表数字图
   value      String // 表头总数
-  posi       Json? // 卡片位置信息
+  x          Int
+  y          Int
+  w          Int
+  h          Int
+  i          String
   config     Json? // 卡片配置信息
   data       Json? // 卡片数据信息
   Board      Board?   @relation(fields: [boardId], references: [id])

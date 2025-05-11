@@ -3,9 +3,6 @@ import { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 import { CardDto } from './dto/card.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { pick } from 'lodash-es';
-import { validate } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class BoardService {
@@ -84,16 +81,6 @@ export class BoardService {
 
   async updateBoard(updateBoardDto: UpdateBoardDto) {
     const { id, cards, ...boardData } = updateBoardDto;
-
-    const dtoInstance = plainToInstance(CardDto, cards);
-    const errors = await validate(dtoInstance);
-    console.log(errors);
-
-    // 排除cards非dto字段，todo：未找到自动过滤的办法
-    const _cards = cards?.map(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      (c) => pick(c, Object.keys(new CardDto())) as CardDto,
-    );
     if (!id) throw new HttpException('id不能为空', 400);
     return this.prisma.$transaction(async (tx) => {
       // 1. 更新board
@@ -102,8 +89,11 @@ export class BoardService {
         data: boardData,
       });
       // 2. 如果有cards数据，处理cards
-      if (_cards?.length) {
-        await this.handleCardUpdate(tx, id, _cards);
+      if (cards?.length) {
+        await this.handleCardUpdate(tx, id, cards);
+      } else {
+        // 3. 如果没有cards数据，删除board下所有cards
+        await tx.card.deleteMany({ where: { boardId: id } });
       }
       return null;
     });

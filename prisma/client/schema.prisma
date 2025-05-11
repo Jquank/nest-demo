@@ -9,12 +9,6 @@ generator client {
   output   = "./client"
 }
 
-generator class_validator {
-  provider = "prisma-class-generator"
-  output   = "../src/common/dto1"
-  config   = "./generator-config.json"
-}
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -50,4 +44,31 @@ model Role {
   createTime  DateTime @default(now())
   users       User[]
   permissions Json?
+}
+
+model Board {
+  id             Int      @id @default(autoincrement())
+  title          String   @unique
+  desc           String?
+  createTime     DateTime @default(now())
+  creator        String?
+  indicatorCount Int?
+  cards          Card[]
+}
+
+model Card {
+  id         Int      @id @default(autoincrement())
+  title      String
+  createTime DateTime @default(now())
+  type       String   @default("50") // 图表卡片类型: 50 代表数字图
+  value      String // 表头总数
+  x          Int
+  y          Int
+  w          Int
+  h          Int
+  i          String
+  config     Json? // 卡片配置信息
+  data       Json? // 卡片数据信息
+  Board      Board?   @relation(fields: [boardId], references: [id])
+  boardId    Int?
 }

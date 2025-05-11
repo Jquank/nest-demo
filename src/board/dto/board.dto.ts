@@ -5,7 +5,9 @@ import {
   IsNumber,
   IsArray,
   IsOptional,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { CardDto } from './card.dto';
 export class BoardDto {
   @IsNotEmpty()
@@ -25,5 +27,7 @@ export class UpdateBoardDto extends BoardDto {
 
   @IsOptional()
   @IsArray()
+  @ValidateNested({ each: true }) // 校验数组中的每个对象
+  @Type(() => CardDto) // 类型转换
   cards?: CardDto[];
 }
