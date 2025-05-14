@@ -9,15 +9,23 @@ import { PrismaModule } from './prisma/prisma.module';
 import { BoardModule } from './board/board.module';
 import { AllExceptionsFilter } from './common/filter/all-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UserModule, RoleModule, SharedModule, PrismaModule, BoardModule],
+  imports: [
+    UserModule,
+    RoleModule,
+    SharedModule,
+    PrismaModule,
+    BoardModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
+    // 全局异常过滤器
     {
       provide: APP_FILTER,
-      // 全局过滤器
       useClass: AllExceptionsFilter,
     },
   ],

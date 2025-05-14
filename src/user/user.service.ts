@@ -1,17 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-
+import { SaltOrRounds } from '@/common/constants';
+import { hash as bcryptHash } from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
-  async createUser(createUserDto: CreateUserDto) {
-    return await this.prisma.user.create({
+  async register(createUserDto: CreateUserDto) {
+    const hashedPassword: string = await bcryptHash(
+      createUserDto.password,
+      SaltOrRounds,
+    );
+    await this.prisma.user.create({
       data: {
         ...createUserDto,
+        password: hashedPassword,
       },
     });
+    return null;
+  }
+
+  // 用户名查询
+  async findOneByUsername(username: string, isContainPassword = false) {
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      select: {
+        password: true,
+        username: true,
+        id: true,
+      },
+    });
+    return isContainPassword ? user : { ...user, password: undefined };
   }
 
   async getUserList() {
@@ -19,7 +38,6 @@ export class UserService {
       select: {
         id: true,
         name: true,
-        sex: true,
       },
     });
   }
@@ -28,6 +46,24 @@ export class UserService {
     return await this.prisma.user.findUnique({
       where: {
         id: id,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
+
+  async getUserByRoleIds(roleIds: number[]) {
+    return await this.prisma.user.findMany({
+      where: {
+        roles: {
+          some: {
+            id: {
+              in: roleIds,
+            },
+          },
+        },
       },
     });
   }
@@ -44,19 +80,5 @@ export class UserService {
       },
     });
     return this.getUserByRoleIds(roleIds.map((role) => role.id));
-  }
-
-  async getUserByRoleIds(roleIds: number[]) {
-    return await this.prisma.user.findMany({
-      where: {
-        roles: {
-          some: {
-            id: {
-              in: roleIds,
-            },
-          },
-        },
-      },
-    });
   }
 }
