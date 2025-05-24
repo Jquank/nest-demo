@@ -1,6 +1,14 @@
-import { Controller, Get, Param, Post, Body, Query } from '@nestjs/common';
-import { Public } from '@/common/decorator/public.decorator';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { Public } from '@/common/decorator/public.decorator';
 
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -32,7 +40,7 @@ export class UserController {
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: number) {
+  getUserById(@Param('id', ParseIntPipe) id: number) {
     return this.userService.getUserById(id);
   }
 }

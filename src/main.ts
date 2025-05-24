@@ -11,6 +11,8 @@ async function bootstrap() {
     abortOnError: false,
   });
 
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('nest-demo')
     .setDescription('nest-demo api')

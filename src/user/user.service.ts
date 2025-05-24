@@ -7,10 +7,14 @@ import { hash as bcryptHash } from 'bcrypt';
 export class UserService {
   constructor(private prisma: PrismaService) {}
   async register(createUserDto: CreateUserDto) {
-    const hashedPassword: string = await bcryptHash(
-      createUserDto.password,
-      SaltOrRounds,
-    );
+    let hashedPassword: string;
+    try {
+      hashedPassword = await bcryptHash(createUserDto.password, SaltOrRounds);
+    } catch (err) {
+      // 处理错误，例如抛出异常或者返回错误信息
+      throw new Error('Failed to hash password: ' + err);
+    }
+
     await this.prisma.user.create({
       data: {
         ...createUserDto,
