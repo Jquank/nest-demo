@@ -9,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
+import { ApiTags, ApiResponse } from '@nestjs/swagger';
 
 @Controller('board')
+@ApiTags('board')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
@@ -35,6 +37,7 @@ export class BoardController {
   }
 
   @Get(':id')
+  @ApiResponse({ status: 200, description: '' })
   getBoardById(@Param('id') id: number) {
     return this.boardService.getBoardById(id);
   }

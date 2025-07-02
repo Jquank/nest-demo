@@ -14,9 +14,9 @@ export class BoardDto {
   @IsString()
   title: string;
 
-  @IsNotEmpty()
   @IsString()
-  desc: string;
+  @IsOptional()
+  desc?: string;
 }
 
 export class CreateBoardDto extends BoardDto {}

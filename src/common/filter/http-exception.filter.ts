@@ -16,15 +16,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
-
     const { method, originalUrl } = request;
+    const exceptionResponse = exception.getResponse();
+    let errorMsg: string = '';
+    if (typeof exceptionResponse === 'string') {
+      errorMsg = exceptionResponse;
+    } else {
+      errorMsg = (exceptionResponse as { message: string }).message || '';
+    }
     try {
       await this.prisma.logReq.create({
         data: {
           method,
           path: originalUrl,
           status,
-          message: exception.message || '',
+          message: errorMsg.toString(),
           timestamp: new Date().toISOString(),
         },
       });
@@ -33,7 +39,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         code: -1,
         status,
         success: false,
-        message: exception.message || '',
+        message: errorMsg.toString(),
         data: null,
         method: method,
         path: request.url,

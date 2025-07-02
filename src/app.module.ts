@@ -10,6 +10,7 @@ import { BoardModule } from './board/board.module';
 import { AllExceptionsFilter } from './common/filter/all-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { HouseModule } from './house/house.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     BoardModule,
     AuthModule,
+    HouseModule,
   ],
   controllers: [AppController],
   providers: [

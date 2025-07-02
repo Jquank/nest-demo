@@ -5,7 +5,6 @@ import {
   CreateRoleDto,
   DeleteRoleDto,
   BindUserDto,
-  FindRoleDto,
   BindPermissionDto,
 } from './dto/role.dto';
 
@@ -49,18 +48,17 @@ export class RoleService {
         users: {
           select: {
             id: true,
-            name: true,
+            username: true,
           },
         },
       },
     });
   }
 
-  async getRoles(findRoleDto?: FindRoleDto) {
-    if (!findRoleDto) {
+  async getRoles(name?: string, desc?: string) {
+    if (!name && !desc) {
       return await this.prisma.role.findMany({});
     }
-    const { name, desc } = findRoleDto;
     const where: Prisma.RoleWhereInput = {};
     if (name) where.name = { contains: name };
     if (desc) where.desc = { contains: desc };

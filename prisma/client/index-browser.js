@@ -131,7 +131,16 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt',
   lastLoginAt: 'lastLoginAt',
   isVerified: 'isVerified',
-  isActive: 'isActive'
+  isActive: 'isActive',
+  departmentId: 'departmentId'
+};
+
+exports.Prisma.DepartmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  desc: 'desc',
+  parentId: 'parentId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.LogReqScalarFieldEnum = {
@@ -181,6 +190,123 @@ exports.Prisma.CardScalarFieldEnum = {
   boardId: 'boardId'
 };
 
+exports.Prisma.TenantScalarFieldEnum = {
+  id: 'id',
+  idCardNumber: 'idCardNumber',
+  username: 'username',
+  tel: 'tel',
+  blacklisted: 'blacklisted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HouseScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  isWholeRent: 'isWholeRent',
+  price: 'price',
+  priceUnit: 'priceUnit',
+  deposit: 'deposit',
+  area: 'area',
+  areaUnit: 'areaUnit',
+  address: 'address',
+  city: 'city',
+  district: 'district',
+  longitude: 'longitude',
+  latitude: 'latitude',
+  bedrooms: 'bedrooms',
+  livingRooms: 'livingRooms',
+  kitchens: 'kitchens',
+  bathrooms: 'bathrooms',
+  washingCount: 'washingCount',
+  floor: 'floor',
+  totalFloors: 'totalFloors',
+  builtYear: 'builtYear',
+  orientation: 'orientation',
+  status: 'status',
+  featured: 'featured',
+  isDeleted: 'isDeleted',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.RoomScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  houseId: 'houseId',
+  price: 'price',
+  priceUnit: 'priceUnit',
+  deposit: 'deposit',
+  area: 'area',
+  areaUnit: 'areaUnit',
+  orientation: 'orientation',
+  status: 'status',
+  featured: 'featured',
+  isDeleted: 'isDeleted',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.HouseImageScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  isPrimary: 'isPrimary',
+  description: 'description',
+  houseId: 'houseId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RoomImageScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  isPrimary: 'isPrimary',
+  description: 'description',
+  roomId: 'roomId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ContractScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  monthlyRent: 'monthlyRent',
+  deposit: 'deposit',
+  status: 'status',
+  houseId: 'houseId',
+  roomId: 'roomId',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ContractDocumentScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  description: 'description',
+  contractId: 'contractId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EnumScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  code: 'code',
+  name: 'name',
+  label: 'label',
+  value: 'value',
+  desc: 'desc',
+  enable: 'enable'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -203,6 +329,11 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
   pinyin: 'pinyin',
   email: 'email',
   avatar: 'avatar'
+};
+
+exports.Prisma.DepartmentOrderByRelevanceFieldEnum = {
+  name: 'name',
+  desc: 'desc'
 };
 
 exports.Prisma.LogReqOrderByRelevanceFieldEnum = {
@@ -244,13 +375,118 @@ exports.Prisma.CardOrderByRelevanceFieldEnum = {
   i: 'i'
 };
 
+exports.Prisma.TenantOrderByRelevanceFieldEnum = {
+  idCardNumber: 'idCardNumber',
+  username: 'username',
+  tel: 'tel'
+};
+
+exports.Prisma.HouseOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description',
+  address: 'address',
+  city: 'city',
+  district: 'district'
+};
+
+exports.Prisma.RoomOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description'
+};
+
+exports.Prisma.HouseImageOrderByRelevanceFieldEnum = {
+  url: 'url',
+  description: 'description'
+};
+
+exports.Prisma.RoomImageOrderByRelevanceFieldEnum = {
+  url: 'url',
+  description: 'description'
+};
+
+exports.Prisma.ContractOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description'
+};
+
+exports.Prisma.ContractDocumentOrderByRelevanceFieldEnum = {
+  url: 'url',
+  description: 'description'
+};
+
+exports.Prisma.EnumOrderByRelevanceFieldEnum = {
+  code: 'code',
+  name: 'name',
+  label: 'label',
+  value: 'value',
+  desc: 'desc'
+};
+exports.HouseType = exports.$Enums.HouseType = {
+  COMMUNITY: 'COMMUNITY',
+  APARTMENT: 'APARTMENT',
+  VILLA: 'VILLA',
+  TOWNHOUSE: 'TOWNHOUSE',
+  COMMERCIAL: 'COMMERCIAL'
+};
+
+exports.PriceUnit = exports.$Enums.PriceUnit = {
+  PER_MONTH: 'PER_MONTH',
+  PER_DAY: 'PER_DAY',
+  PER_YEAR: 'PER_YEAR'
+};
+
+exports.AreaUnit = exports.$Enums.AreaUnit = {
+  SQUARE_METER: 'SQUARE_METER',
+  SQUARE_FOOT: 'SQUARE_FOOT'
+};
+
+exports.Direction = exports.$Enums.Direction = {
+  EAST: 'EAST',
+  SOUTH_EAST: 'SOUTH_EAST',
+  SOUTH: 'SOUTH',
+  SOUTH_WEST: 'SOUTH_WEST',
+  WEST: 'WEST',
+  NORTH_WEST: 'NORTH_WEST',
+  NORTH: 'NORTH',
+  NORTH_EAST: 'NORTH_EAST'
+};
+
+exports.HouseStatus = exports.$Enums.HouseStatus = {
+  AVAILABLE: 'AVAILABLE',
+  RENTED: 'RENTED',
+  UNDER_REPAIR: 'UNDER_REPAIR',
+  UNAVAILABLE: 'UNAVAILABLE'
+};
+
+exports.ContractStatus = exports.$Enums.ContractStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  TERMINATED: 'TERMINATED'
+};
+
+exports.EnumType = exports.$Enums.EnumType = {
+  SYSTEM: 'SYSTEM',
+  BUSINESS: 'BUSINESS',
+  NORMAL: 'NORMAL',
+  FIELD: 'FIELD'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Department: 'Department',
   LogReq: 'LogReq',
   Role: 'Role',
   Board: 'Board',
-  Card: 'Card'
+  Card: 'Card',
+  Tenant: 'Tenant',
+  House: 'House',
+  Room: 'Room',
+  HouseImage: 'HouseImage',
+  RoomImage: 'RoomImage',
+  Contract: 'Contract',
+  ContractDocument: 'ContractDocument',
+  Enum: 'Enum'
 };
 
 /**

@@ -22,12 +22,14 @@ export class AuthService {
       user.password || '',
     );
     if (!isPasswordValid) {
-      throw new HttpException('密码错误', 400);
+      throw new HttpException('密码错误', 401);
     }
-    const payload = { sub: user.id, username: user.username };
+    const payload = { id: user.id, username: user.username };
+    const token = await this.jwtService.signAsync(payload);
     return {
       ...{ ...user, password: undefined },
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: token,
+      token_type: 'Bearer',
     };
   }
 }

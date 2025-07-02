@@ -1,10 +1,4 @@
-import {
-  IsOptional,
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-  IsArray,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsArray } from 'class-validator';
 
 export class CreateRoleDto {
   @IsNotEmpty()
@@ -37,14 +31,4 @@ export class BindPermissionDto {
   @IsNotEmpty()
   @IsArray()
   permissions: string[];
-}
-
-export class FindRoleDto {
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @IsString()
-  @IsOptional()
-  desc?: string;
 }

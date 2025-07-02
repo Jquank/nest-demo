@@ -6,18 +6,20 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { PrismaService } from './prisma/prisma.service';
 import { HttpInterceptor } from './common/interceptor/http.interceptor';
 
+const ApiVersion = '1';
+const ApiPrefix = 'api';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     abortOnError: false,
   });
-
+  app.setGlobalPrefix(ApiPrefix);
   app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('nest-demo')
     .setDescription('nest-demo api')
-    .setVersion('1.0')
-    .addTag('cats')
+    .setVersion(ApiVersion)
+    .addServer(`/${ApiPrefix}`)
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

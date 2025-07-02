@@ -14,22 +14,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// generator nestjsDto {
+//   provider = "prisma-generator-nestjs-dto"
+//   output   = "../src/dto"
+// }
+
 model User {
-  id          Int       @id @default(autoincrement())
-  username    String    @default("")
-  password    String    @default("")
-  name        String?
-  pinyin      String?
-  email       String?   @unique
-  gender      Int?
-  avatar      String?
-  birthDate   DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
-  lastLoginAt DateTime?
-  isVerified  Boolean   @default(false)
-  isActive    Boolean   @default(true)
-  roles       Role[]
+  id           Int         @id @default(autoincrement())
+  username     String      @unique
+  password     String      @default("")
+  name         String?
+  pinyin       String?
+  email        String?     @unique
+  gender       Int?
+  avatar       String?
+  birthDate    DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime?   @updatedAt
+  lastLoginAt  DateTime?
+  isVerified   Boolean     @default(false)
+  isActive     Boolean     @default(true)
+  roles        Role[]
+  Department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId Int?
+}
+
+model Department {
+  id        Int          @id @default(autoincrement())
+  name      String       @unique
+  desc      String?
+  users     User[]
+  parent    Department?  @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  parentId  Int?
+  children  Department[] @relation("DepartmentHierarchy")
+  createdAt DateTime     @default(now())
 }
 
 model LogReq {
@@ -80,4 +98,235 @@ model Card {
   data       Json? // 卡片数据信息
   Board      Board?   @relation(fields: [boardId], references: [id])
   boardId    Int?
+}
+
+enum HouseType {
+  COMMUNITY // 小区住宅
+  APARTMENT // 公寓
+  VILLA // 别墅
+  TOWNHOUSE // 联排别墅
+  COMMERCIAL // 商业房产
+}
+
+enum RoomType {
+  MASTER_ROOM // 主卧
+  SECOND_ROOM // 次卧
+  PART_ROOM // 隔断
+}
+
+enum PriceUnit {
+  PER_MONTH // 月租
+  PER_DAY // 日租
+  PER_YEAR // 年租
+}
+
+enum AreaUnit {
+  SQUARE_METER // 平方米
+  SQUARE_FOOT // 平方英尺
+}
+
+enum Direction {
+  EAST // 东
+  SOUTH_EAST // 东南
+  SOUTH // 南
+  SOUTH_WEST // 西南
+  WEST // 西
+  NORTH_WEST // 西北
+  NORTH // 北
+  NORTH_EAST // 东北
+}
+
+enum HouseStatus {
+  AVAILABLE // 可租
+  RENTED // 已出租
+  UNDER_REPAIR // 维修中
+  UNAVAILABLE // 不可用
+}
+
+// 租户表
+model Tenant {
+  id           Int        @id @default(autoincrement())
+  idCardNumber String?    @db.VarChar(18) // 身份证号
+  username     String
+  tel          String?
+  houses       House[]
+  rooms        Room[]
+  contracts    Contract[]
+  blacklisted  Boolean    @default(false) // 是否黑名单
+
+  // 时间戳
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model House {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(200)
+  description String?
+  type        HouseType @default(COMMUNITY)
+  isWholeRent Boolean   @default(false)
+
+  // 价格信息
+  price     Decimal   @db.Decimal(10, 2)
+  priceUnit PriceUnit @default(PER_MONTH)
+  deposit   Decimal?  @db.Decimal(10, 2)
+
+  // 面积信息
+  area     Decimal? @db.Decimal(8, 2)
+  areaUnit AreaUnit @default(SQUARE_METER)
+
+  // 位置信息
+  address   String
+  city      String?
+  district  String?
+  longitude Decimal? @db.Decimal(10, 7) // 经度
+  latitude  Decimal? @db.Decimal(10, 7) // 纬度
+
+  // 房间信息
+  bedrooms     Int @default(0) // 房间数量
+  livingRooms  Int @default(0) // 客厅数量
+  kitchens     Int @default(0) // 出发数量
+  bathrooms    Int @default(0) // 卫生间数量
+  washingCount Int @default(0) // 洗衣间数量
+
+  // 设施特征
+  floor       Int?
+  totalFloors Int?
+  builtYear   Int?
+  orientation Direction?
+
+  // 状态信息
+  status    HouseStatus @default(AVAILABLE)
+  featured  Boolean     @default(false)
+  isDeleted Boolean     @default(false)
+
+  // 关联关系
+  tenant    Tenant       @relation(fields: [tenantId], references: [id])
+  tenantId  Int
+  images    HouseImage[]
+  rooms     Room[]
+  contracts Contract[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Room {
+  id          Int     @id @default(autoincrement())
+  title       String  @db.VarChar(200)
+  description String?
+
+  // 关联房屋
+  house   House @relation(fields: [houseId], references: [id])
+  houseId Int
+
+  // 价格信息
+  price     Decimal   @db.Decimal(10, 2)
+  priceUnit PriceUnit @default(PER_MONTH)
+  deposit   Decimal?  @db.Decimal(10, 2)
+
+  // 面积信息
+  area     Decimal  @db.Decimal(8, 2)
+  areaUnit AreaUnit @default(SQUARE_METER)
+
+  // 房间信息
+  orientation Direction?
+
+  // 状态信息
+  status    HouseStatus @default(AVAILABLE)
+  featured  Boolean     @default(false)
+  isDeleted Boolean     @default(false)
+
+  // 关联关系
+  images    RoomImage[]
+  contracts Contract[]
+  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+  tenantId  Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model HouseImage {
+  id          Int      @id @default(autoincrement())
+  url         String
+  isPrimary   Boolean  @default(false)
+  description String?
+  house       House    @relation(fields: [houseId], references: [id])
+  houseId     Int
+  createdAt   DateTime @default(now())
+}
+
+model RoomImage {
+  id          Int      @id @default(autoincrement())
+  url         String
+  isPrimary   Boolean  @default(false)
+  description String?
+  room        Room     @relation(fields: [roomId], references: [id])
+  roomId      Int
+  createdAt   DateTime @default(now())
+}
+
+enum ContractStatus {
+  DRAFT // 草稿
+  ACTIVE // 生效中
+  EXPIRED // 已过期
+  TERMINATED // 已终止
+}
+
+model Contract {
+  id          Int            @id @default(autoincrement())
+  // 合同基本信息
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  monthlyRent Decimal        @db.Decimal(10, 2)
+  deposit     Decimal        @db.Decimal(10, 2)
+  status      ContractStatus @default(ACTIVE)
+
+  // 关联房源 (可以是整租或分租)
+  house   House? @relation(fields: [houseId], references: [id])
+  houseId Int?
+  room    Room?  @relation(fields: [roomId], references: [id])
+  roomId  Int?
+
+  // 关联租户
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId Int
+
+  // 合同文档
+  documents ContractDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContractDocument {
+  id          Int      @id @default(autoincrement())
+  url         String
+  description String?
+  contract    Contract @relation(fields: [contractId], references: [id])
+  contractId  Int
+  createdAt   DateTime @default(now())
+}
+
+enum EnumType {
+  SYSTEM // 系统枚举
+  BUSINESS // 业务枚举
+  NORMAL // 通用枚举
+  FIELD // 字段枚举
+}
+
+model Enum {
+  id     Int      @id @default(autoincrement())
+  type   EnumType @default(NORMAL)
+  code   String   @unique
+  name   String?
+  label  String
+  value  String
+  desc   String?
+  enable Boolean  @default(true)
 }

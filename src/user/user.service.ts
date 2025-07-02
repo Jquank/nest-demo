@@ -11,7 +11,6 @@ export class UserService {
     try {
       hashedPassword = await bcryptHash(createUserDto.password, SaltOrRounds);
     } catch (err) {
-      // 处理错误，例如抛出异常或者返回错误信息
       throw new Error('Failed to hash password: ' + err);
     }
 
@@ -41,7 +40,7 @@ export class UserService {
     return await this.prisma.user.findMany({
       select: {
         id: true,
-        name: true,
+        username: true,
       },
     });
   }
@@ -53,7 +52,8 @@ export class UserService {
       },
       select: {
         id: true,
-        name: true,
+        username: true,
+        roles: true,
       },
     });
   }
