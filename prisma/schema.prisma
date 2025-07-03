@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -317,16 +317,30 @@ enum EnumType {
   SYSTEM // 系统枚举
   BUSINESS // 业务枚举
   NORMAL // 通用枚举
-  FIELD // 字段枚举
+  COLUMN // 列枚举
 }
 
+// 枚举表
 model Enum {
-  id     Int      @id @default(autoincrement())
-  type   EnumType @default(NORMAL)
-  code   String   @unique
-  name   String?
-  label  String
-  value  String
-  desc   String?
-  enable Boolean  @default(true)
+  id        Int         @id @default(autoincrement())
+  type      EnumType    @default(NORMAL)
+  code      String      @unique
+  name      String
+  desc      String?
+  enable    Boolean     @default(true)
+  enumItems EnumItems[]
+}
+
+// 枚举项
+model EnumItems {
+  id        Int      @id @default(autoincrement())
+  value     String
+  label     String
+  enLabel   String?
+  desc      String?
+  enable    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  enum      Enum     @relation(fields: [enumId], references: [id])
+  enumId    Int
 }

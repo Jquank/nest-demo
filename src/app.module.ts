@@ -11,6 +11,7 @@ import { AllExceptionsFilter } from './common/filter/all-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { HouseModule } from './house/house.module';
+import { EnumModule } from './enum/enum.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HouseModule } from './house/house.module';
     BoardModule,
     AuthModule,
     HouseModule,
+    EnumModule,
   ],
   controllers: [AppController],
   providers: [
