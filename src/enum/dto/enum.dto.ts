@@ -6,8 +6,9 @@ import {
   IsEnum,
 } from 'class-validator';
 import { EnumType } from '@prisma/client';
-import { PartialType } from '@nestjs/swagger';
+import { PartialType, ApiProperty } from '@nestjs/swagger';
 export class CreateEnumDto {
+  @ApiProperty({ enum: EnumType })
   @IsEnum(EnumType)
   type: EnumType;
 
@@ -38,6 +39,10 @@ export class CreateEnumItemsDto {
   @IsNotEmpty()
   @IsString()
   label: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isAuthColumn?: boolean;
 
   @IsOptional()
   @IsString()
