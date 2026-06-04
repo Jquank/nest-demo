@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
@@ -20,6 +20,10 @@ export class EnumService {
   ) {}
 
   async createEnum(createEnumDto: CreateEnumDto) {
+    const enumData = await this.prisma.enum.findUnique({
+      where: { code: createEnumDto.code },
+    });
+    if (enumData) throw new HttpException('code已存在', 400);
     await this.prisma.enum.create({
       data: createEnumDto,
     });
@@ -32,7 +36,7 @@ export class EnumService {
     });
   }
 
-  async getEnumsList(page: PaginationDto) {
+  async getEnumList(page: PaginationDto) {
     const { currentPage, pageSize } = page;
     const skip = (currentPage - 1) * pageSize;
     const [enums, total] = await Promise.all([

@@ -3,6 +3,8 @@ import {
   Get,
   Param,
   Post,
+  Put,
+  Delete,
   Body,
   Query,
   ParseIntPipe,
@@ -10,8 +12,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Public } from '@/common/decorator/public.decorator';
-
-import { CreateUserDto } from './dto/create-user.dto';
+import { Roles } from '@/common/decorator/roles.decorator';
+import { CreateUserDto, AdminCreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { User } from '@prisma/client';
@@ -58,5 +61,45 @@ export class UserController {
   @ApiResponse({ status: 200, description: '' })
   getUserById(@Param('id', ParseIntPipe) id: number) {
     return this.userService.getUserById(id);
+  }
+
+  // ========== 管理端 ==========
+
+  @Get('manage/paginated')
+  @Roles('admin')
+  getPaginatedList(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+    @Query('keyword') keyword?: string,
+  ) {
+    return this.userService.getPaginatedList(
+      page ? parseInt(page, 10) : 1,
+      pageSize ? parseInt(pageSize, 10) : 20,
+      keyword,
+    );
+  }
+
+  @Post('manage')
+  @Roles('admin')
+  create(@Body() dto: AdminCreateUserDto) {
+    return this.userService.create(dto);
+  }
+
+  @Put('manage/:id')
+  @Roles('admin')
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+    return this.userService.update(id, dto);
+  }
+
+  @Post('manage/:id/reset-password')
+  @Roles('admin')
+  resetPassword(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.resetPassword(id);
+  }
+
+  @Delete('manage/:id')
+  @Roles('admin')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.delete(id);
   }
 }

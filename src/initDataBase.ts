@@ -10,7 +10,19 @@ async function initRoleAndUser() {
       data: [
         {
           name: 'admin',
-          permissions: ['menu:home', 'menu:role-manage'],
+          permissions: [
+            'menu:home',
+            'menu:role-manage',
+            'menu:system-manage',
+            'menu:hotspot-manage',
+            'menu:hotspot-browse',
+            'menu:hotspot-generate',
+            'menu:hotspot-edit',
+          ],
+        },
+        {
+          name: 'user',
+          permissions: ['menu:home', 'menu:hotspot-browse'],
         },
       ],
     });
@@ -49,9 +61,43 @@ async function initboard() {
   }
 }
 
+async function initCategories() {
+  // 清理旧分类（AI、科技、财经 合并/移除）
+  const oldNames = ['AI', '科技', '财经', '体育'];
+  for (const name of oldNames) {
+    const cat = await prisma.category.findFirst({ where: { name } });
+    if (cat) {
+      await prisma.hotspot.deleteMany({ where: { categoryId: cat.id } });
+      await prisma.category.delete({ where: { id: cat.id } });
+      console.log(`已删除旧分类"${name}"及其关联热点`);
+    }
+  }
+
+  // 确保4个新分类存在
+  const newCategories = [
+    { name: '娱乐', sortOrder: 1 },
+    { name: '科技AI', sortOrder: 2 },
+    { name: '情感', sortOrder: 3 },
+    { name: '社会', sortOrder: 4 },
+  ];
+
+  for (const nc of newCategories) {
+    const existing = await prisma.category.findFirst({
+      where: { name: nc.name },
+    });
+    if (!existing) {
+      await prisma.category.create({ data: nc });
+      console.log(`已创建分类"${nc.name}"`);
+    }
+  }
+
+  console.log('分类初始化完成');
+}
+
 async function main() {
   await initRoleAndUser();
   await initboard();
+  await initCategories();
 }
 
 main()

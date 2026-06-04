@@ -24,10 +24,16 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new HttpException('密码错误', 401);
     }
-    const payload = { id: user.id, username: user.username };
+
+    // 获取完整用户信息（含角色），用于 JWT payload 和前端路由守卫
+    const fullUser = await this.userService.getUserById(user.id!);
+    const roles = fullUser?.roles?.map((r: any) => r.name) || [];
+
+    const payload = { id: user.id, username: user.username, roles };
     const token = await this.jwtService.signAsync(payload);
+
     return {
-      ...{ ...user, password: undefined },
+      ...fullUser,
       access_token: token,
       token_type: 'Bearer',
     };

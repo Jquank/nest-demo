@@ -10,8 +10,10 @@ import { BoardModule } from './board/board.module';
 import { AllExceptionsFilter } from './common/filter/all-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { HouseModule } from './house/house.module';
 import { EnumModule } from './enum/enum.module';
+import { HotspotModule } from './hotspot/hotspot.module';
+import { AiImageModule } from './ai-image/ai-image.module';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
@@ -21,8 +23,10 @@ import { EnumModule } from './enum/enum.module';
     PrismaModule,
     BoardModule,
     AuthModule,
-    HouseModule,
     EnumModule,
+    HotspotModule,
+    AiImageModule,
+    WalletModule,
   ],
   controllers: [AppController],
   providers: [

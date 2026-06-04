@@ -16,11 +16,11 @@ import {
   CreateEnumItemsDto,
   UpdateEnumItemDto,
 } from './dto/enum.dto';
-import { Public } from '@/common/decorator/public.decorator';
+// import { Public } from '@/common/decorator/public.decorator';
 import { ApiOperation, ApiTags, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { Request } from 'express';
-import { User } from '@prisma/client';
+import { User, EnumType } from '@prisma/client';
 
 interface IRequest extends Request {
   user: User;
@@ -32,22 +32,30 @@ export class EnumController {
   constructor(private readonly enumService: EnumService) {}
 
   @Post()
-  @Public()
   @ApiOperation({ summary: '新增枚举' })
   createEnum(@Body() createEnumDto: CreateEnumDto) {
     return this.enumService.createEnum(createEnumDto);
   }
 
   @Get()
-  @Public()
   @ApiOperation({ summary: '分页查询枚举' })
   @ApiResponse({ status: 200, description: '' })
-  getEnumsList(@Body() page: PaginationDto) {
-    return this.enumService.getEnumsList(page);
+  getEnumList(@Body() page: PaginationDto) {
+    return this.enumService.getEnumList(page);
+  }
+
+  @Get('type')
+  @ApiOperation({ summary: '查询枚举类型' })
+  getEnumType() {
+    return Object.keys(EnumType).map((k) => {
+      return {
+        label: k,
+        value: k,
+      };
+    });
   }
 
   @Get('items')
-  @Public()
   @ApiOperation({ summary: '查询单个枚举的枚举项' })
   @ApiResponse({ status: 200, description: '' })
   getEnumItemsByCode(@Query('code') code: string, @Req() req: IRequest) {
@@ -55,7 +63,6 @@ export class EnumController {
   }
 
   @Put(':id')
-  @Public()
   @ApiOperation({ summary: '修改枚举' })
   updateEnum(
     @Param('id', ParseIntPipe) id: number,
@@ -65,7 +72,6 @@ export class EnumController {
   }
 
   @Post('items/:id')
-  @Public()
   @ApiOperation({ summary: '新增枚举项' })
   @ApiBody({
     type: CreateEnumItemsDto,
@@ -79,7 +85,6 @@ export class EnumController {
   }
 
   @Put('items/:id')
-  @Public()
   @ApiOperation({ summary: '修改枚举项' })
   updateEnumItem(
     @Param('id', ParseIntPipe) id: number,

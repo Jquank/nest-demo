@@ -20,23 +20,27 @@ datasource db {
 // }
 
 model User {
-  id           Int         @id @default(autoincrement())
-  username     String      @unique
-  password     String      @default("")
+  id           Int             @id @default(autoincrement())
+  username     String          @unique
+  password     String          @default("")
   name         String?
   pinyin       String?
-  email        String?     @unique
+  email        String?         @unique
   gender       Int?
   avatar       String?
   birthDate    DateTime?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime?   @updatedAt
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime?       @updatedAt
   lastLoginAt  DateTime?
-  isVerified   Boolean     @default(false)
-  isActive     Boolean     @default(true)
+  isVerified   Boolean         @default(false)
+  isActive     Boolean         @default(true)
   roles        Role[]
-  Department   Department? @relation(fields: [departmentId], references: [id])
+  Department   Department?     @relation(fields: [departmentId], references: [id])
   departmentId Int?
+  prompts      AiImagePrompt[]
+  imageRecords AiImageRecord[]
+  wallet       Wallet?
+  transactions Transaction[]
 }
 
 model Department {
@@ -100,219 +104,6 @@ model Card {
   boardId    Int?
 }
 
-enum HouseType {
-  COMMUNITY // 小区住宅
-  APARTMENT // 公寓
-  VILLA // 别墅
-  TOWNHOUSE // 联排别墅
-  COMMERCIAL // 商业房产
-}
-
-enum RoomType {
-  MASTER_ROOM // 主卧
-  SECOND_ROOM // 次卧
-  PART_ROOM // 隔断
-}
-
-enum PriceUnit {
-  PER_MONTH // 月租
-  PER_DAY // 日租
-  PER_YEAR // 年租
-}
-
-enum AreaUnit {
-  SQUARE_METER // 平方米
-  SQUARE_FOOT // 平方英尺
-}
-
-enum Direction {
-  EAST // 东
-  SOUTH_EAST // 东南
-  SOUTH // 南
-  SOUTH_WEST // 西南
-  WEST // 西
-  NORTH_WEST // 西北
-  NORTH // 北
-  NORTH_EAST // 东北
-}
-
-enum HouseStatus {
-  AVAILABLE // 可租
-  RENTED // 已出租
-  UNDER_REPAIR // 维修中
-  UNAVAILABLE // 不可用
-}
-
-// 租户表
-model Tenant {
-  id           Int        @id @default(autoincrement())
-  idCardNumber String?    @db.VarChar(18) // 身份证号
-  username     String
-  tel          String?
-  houses       House[]
-  rooms        Room[]
-  contracts    Contract[]
-  blacklisted  Boolean    @default(false) // 是否黑名单
-
-  // 时间戳
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model House {
-  id          Int       @id @default(autoincrement())
-  title       String    @db.VarChar(200)
-  description String?
-  type        HouseType @default(COMMUNITY)
-  isWholeRent Boolean   @default(false)
-
-  // 价格信息
-  price     Decimal   @db.Decimal(10, 2)
-  priceUnit PriceUnit @default(PER_MONTH)
-  deposit   Decimal?  @db.Decimal(10, 2)
-
-  // 面积信息
-  area     Decimal? @db.Decimal(8, 2)
-  areaUnit AreaUnit @default(SQUARE_METER)
-
-  // 位置信息
-  address   String
-  city      String?
-  district  String?
-  longitude Decimal? @db.Decimal(10, 7) // 经度
-  latitude  Decimal? @db.Decimal(10, 7) // 纬度
-
-  // 房间信息
-  bedrooms     Int @default(0) // 房间数量
-  livingRooms  Int @default(0) // 客厅数量
-  kitchens     Int @default(0) // 出发数量
-  bathrooms    Int @default(0) // 卫生间数量
-  washingCount Int @default(0) // 洗衣间数量
-
-  // 设施特征
-  floor       Int?
-  totalFloors Int?
-  builtYear   Int?
-  orientation Direction?
-
-  // 状态信息
-  status    HouseStatus @default(AVAILABLE)
-  featured  Boolean     @default(false)
-  isDeleted Boolean     @default(false)
-
-  // 关联关系
-  tenant    Tenant       @relation(fields: [tenantId], references: [id])
-  tenantId  Int
-  images    HouseImage[]
-  rooms     Room[]
-  contracts Contract[]
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-}
-
-model Room {
-  id          Int     @id @default(autoincrement())
-  title       String  @db.VarChar(200)
-  description String?
-
-  // 关联房屋
-  house   House @relation(fields: [houseId], references: [id])
-  houseId Int
-
-  // 价格信息
-  price     Decimal   @db.Decimal(10, 2)
-  priceUnit PriceUnit @default(PER_MONTH)
-  deposit   Decimal?  @db.Decimal(10, 2)
-
-  // 面积信息
-  area     Decimal  @db.Decimal(8, 2)
-  areaUnit AreaUnit @default(SQUARE_METER)
-
-  // 房间信息
-  orientation Direction?
-
-  // 状态信息
-  status    HouseStatus @default(AVAILABLE)
-  featured  Boolean     @default(false)
-  isDeleted Boolean     @default(false)
-
-  // 关联关系
-  images    RoomImage[]
-  contracts Contract[]
-  tenant    Tenant      @relation(fields: [tenantId], references: [id])
-  tenantId  Int
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-}
-
-model HouseImage {
-  id          Int      @id @default(autoincrement())
-  url         String
-  isPrimary   Boolean  @default(false)
-  description String?
-  house       House    @relation(fields: [houseId], references: [id])
-  houseId     Int
-  createdAt   DateTime @default(now())
-}
-
-model RoomImage {
-  id          Int      @id @default(autoincrement())
-  url         String
-  isPrimary   Boolean  @default(false)
-  description String?
-  room        Room     @relation(fields: [roomId], references: [id])
-  roomId      Int
-  createdAt   DateTime @default(now())
-}
-
-enum ContractStatus {
-  DRAFT // 草稿
-  ACTIVE // 生效中
-  EXPIRED // 已过期
-  TERMINATED // 已终止
-}
-
-model Contract {
-  id          Int            @id @default(autoincrement())
-  // 合同基本信息
-  title       String
-  description String?
-  startDate   DateTime
-  endDate     DateTime
-  monthlyRent Decimal        @db.Decimal(10, 2)
-  deposit     Decimal        @db.Decimal(10, 2)
-  status      ContractStatus @default(ACTIVE)
-
-  // 关联房源 (可以是整租或分租)
-  house   House? @relation(fields: [houseId], references: [id])
-  houseId Int?
-  room    Room?  @relation(fields: [roomId], references: [id])
-  roomId  Int?
-
-  // 关联租户
-  tenant   Tenant @relation(fields: [tenantId], references: [id])
-  tenantId Int
-
-  // 合同文档
-  documents ContractDocument[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ContractDocument {
-  id          Int      @id @default(autoincrement())
-  url         String
-  description String?
-  contract    Contract @relation(fields: [contractId], references: [id])
-  contractId  Int
-  createdAt   DateTime @default(now())
-}
-
 enum EnumType {
   SYSTEM // 系统枚举
   BUSINESS // 业务枚举
@@ -344,4 +135,112 @@ model EnumItems {
   updatedAt    DateTime @updatedAt
   enum         Enum     @relation(fields: [enumId], references: [id])
   enumId       Int
+}
+
+// ======== 热点自动生成图文 ========
+
+// 热点分类（如社会、科技、娱乐、财经、AI）
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  sortOrder Int       @default(0)
+  hotspots  Hotspot[]
+  createdAt DateTime  @default(now())
+}
+
+// 每日热点
+model Hotspot {
+  id            Int      @id @default(autoincrement())
+  title         String   @db.VarChar(500)
+  summary       String?  @db.Text
+  source        String?
+  region        String? // 地域: "国内" | "国外"
+  heatIndex     Int      @default(0)
+  imageUrl      String?
+  localImageUrl String?
+  images        Json? // 多图片URL数组，如 ["url1","url2"]；下载后替换为本地路径
+  contentUrl    String? // 原文/项目链接（如GitHub仓库、教程地址）
+  publishDate   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  category      Category @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+}
+
+// ======== AI 生图 ========
+
+// AI 生图模型配置
+model AiImageModel {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique // 模型标识，如 "ernie-image-turbo"
+  displayName String // 显示名称，如 "百度文心·图像 turbo"
+  apiUrl      String // API 地址
+  defaultSize String          @default("1376x768") // 默认图片尺寸
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  records     AiImageRecord[]
+  prompts     AiImagePrompt[]
+}
+
+// AI 生图提示词模板（系统级 userId=null 人人可见，用户自建绑定 userId）
+model AiImagePrompt {
+  id        Int             @id @default(autoincrement())
+  name      String // 提示词名称
+  content   String          @db.Text // 提示词内容
+  isSystem  Boolean         @default(false) // 是否系统内置模板
+  userId    Int?
+  size      String? // 保存时的尺寸，方便回填
+  modelId   Int? // 保存时的模型ID，方便回填
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  user      User?           @relation(fields: [userId], references: [id])
+  modelRel  AiImageModel?   @relation(fields: [modelId], references: [id])
+  records   AiImageRecord[]
+}
+
+// AI 生图记录
+model AiImageRecord {
+  id        Int            @id @default(autoincrement())
+  modelId   Int
+  promptId  Int?
+  prompt    String         @db.Text // 实际使用的提示词
+  size      String // 生成尺寸
+  imageUrl  String // 图片访问URL
+  localPath String // 本地存储路径
+  userId    Int?
+  createdAt DateTime       @default(now())
+  model     AiImageModel   @relation(fields: [modelId], references: [id])
+  promptRel AiImagePrompt? @relation(fields: [promptId], references: [id])
+  user      User?          @relation(fields: [userId], references: [id])
+}
+
+// ======== 计费充值 ========
+
+// 用户钱包（1:1）
+model Wallet {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  balance        Int      @default(0) // 余额（单位：分）
+  totalRecharged Int      @default(0) // 累计充值
+  totalConsumed  Int      @default(0) // 累计消费
+  version        Int      @default(0) // 乐观锁
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+// 交易流水
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  type          String // RECHARGE | CONSUME | REFUND
+  amount        Int // 金额（分），充值为正、消费为负
+  balanceBefore Int // 操作前余额
+  balanceAfter  Int // 操作后余额
+  relatedType   String? // 关联业务：AI_IMAGE | ADMIN_RECHARGE
+  relatedId     Int? // 关联记录ID
+  description   String? // 备注
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
 }
