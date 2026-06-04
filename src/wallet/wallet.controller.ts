@@ -20,7 +20,7 @@ class RechargeDto {
 }
 
 interface IRequest extends Request {
-  user: { id: number; username: string };
+  user: { id: number; username: string; roles?: string[] };
 }
 
 @Controller('wallet')
@@ -46,15 +46,23 @@ export class WalletController {
 
   @Get('transactions')
   getTransactions(
+    @Req() req: IRequest,
     @Query('page') page?: string,
     @Query('pageSize') pageSize?: string,
     @Query('userId') userId?: string,
     @Query('type') type?: string,
   ) {
+    // 普通用户只能看自己的交易记录
+    const targetUserId = userId ? parseInt(userId, 10) : undefined;
+    const isAdmin = req.user.roles?.includes('admin');
+    const effectiveUserId = isAdmin
+      ? targetUserId
+      : req.user.id;
+
     return this.walletService.getTransactions(
       page ? parseInt(page, 10) : 1,
       pageSize ? parseInt(pageSize, 10) : 20,
-      userId ? parseInt(userId, 10) : undefined,
+      effectiveUserId,
       type,
     );
   }
