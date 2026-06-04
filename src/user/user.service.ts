@@ -1,10 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto, AdminCreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SaltOrRounds } from '@/common/constants';
 import { hash as bcryptHash } from 'bcrypt';
 import { randomBytes } from 'crypto';
+import { unlinkSync, existsSync } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -235,6 +236,35 @@ export class UserService {
   async delete(id: number) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new BadRequestException('用户不存在');
-    return this.prisma.user.delete({ where: { id } });
+
+    // 先删除 AI 图片文件
+    const imageRecords = await this.prisma.aiImageRecord.findMany({
+      where: { userId: id },
+      select: { localPath: true },
+    });
+    for (const r of imageRecords) {
+      try {
+        if (r.localPath && existsSync(r.localPath)) {
+          unlinkSync(r.localPath);
+        }
+      } catch {
+        // 忽略文件删除失败
+      }
+    }
+
+    // 清理数据库关联数据，再删除用户
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id },
+        data: { roles: { set: [] } },
+      }),
+      this.prisma.wallet.deleteMany({ where: { userId: id } }),
+      this.prisma.transaction.deleteMany({ where: { userId: id } }),
+      this.prisma.aiImageRecord.deleteMany({ where: { userId: id } }),
+      this.prisma.aiImagePrompt.deleteMany({ where: { userId: id, isSystem: false } }),
+      this.prisma.user.delete({ where: { id } }),
+    ]);
+
+    return { success: true };
   }
 }

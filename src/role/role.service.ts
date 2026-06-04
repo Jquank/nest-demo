@@ -21,11 +21,11 @@ export class RoleService {
   }
 
   async deleteRole(deleteRoleDto: DeleteRoleDto) {
-    return await this.prisma.role.deleteMany({
-      where: {
-        id: { in: deleteRoleDto.ids },
-      },
-    });
+    // 逐个删除，Prisma 的 delete 会自动清理多对多关联表
+    for (const id of deleteRoleDto.ids) {
+      await this.prisma.role.delete({ where: { id } });
+    }
+    return { success: true, deleted: deleteRoleDto.ids.length };
   }
 
   async updateRole(id: number, createRoleDto: CreateRoleDto) {
