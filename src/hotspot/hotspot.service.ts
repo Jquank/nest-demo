@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AiService } from '../common/service/ai.service';
 import { AiImageService } from '../ai-image/ai-image.service';
 import { WalletService } from '../wallet/wallet.service';
+import { ImageDownloadService } from './image-download.service';
 import { CreateHotspotDto, UpdateHotspotDto } from './dto/hotspot.dto';
 import { GenerateContentDto } from './dto/generate-content.dto';
 
@@ -15,6 +16,7 @@ export class HotspotService {
     private aiService: AiService,
     private aiImageService: AiImageService,
     private walletService: WalletService,
+    private imageDownloadService: ImageDownloadService,
   ) {}
 
   // ======== 分类 ========
@@ -75,6 +77,14 @@ export class HotspotService {
   }
 
   async deleteHotspot(id: number) {
+    // 先查出热点信息（含图片路径），再删除
+    const hotspot = await this.prisma.hotspot.findUnique({
+      where: { id },
+      select: { imageUrl: true, localImageUrl: true, images: true },
+    });
+    if (hotspot) {
+      this.imageDownloadService.deleteHotspotImages(hotspot);
+    }
     return this.prisma.hotspot.delete({ where: { id } });
   }
 
@@ -82,6 +92,15 @@ export class HotspotService {
   async refreshHotspots(date: string, hotspots: CreateHotspotDto[]) {
     const startOfDay = new Date(date + 'T00:00:00');
     const endOfDay = new Date(date + 'T23:59:59');
+
+    // 先查出要删除的热点图片，再删记录
+    const toDelete = await this.prisma.hotspot.findMany({
+      where: { publishDate: { gte: startOfDay, lte: endOfDay } },
+      select: { imageUrl: true, localImageUrl: true, images: true },
+    });
+    if (toDelete.length > 0) {
+      this.imageDownloadService.deleteHotspotImagesBatch(toDelete);
+    }
 
     await this.prisma.hotspot.deleteMany({
       where: { publishDate: { gte: startOfDay, lte: endOfDay } },
@@ -413,13 +432,20 @@ export class HotspotService {
       'AI_HOTSPOT',
     );
 
-    // 0. 先清理超过2天的过期热点
+    // 0. 先清理超过2天的过期热点（含图片文件）
     const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+    const expiredHotspots = await this.prisma.hotspot.findMany({
+      where: { createdAt: { lt: twoDaysAgo } },
+      select: { imageUrl: true, localImageUrl: true, images: true },
+    });
+    if (expiredHotspots.length > 0) {
+      this.imageDownloadService.deleteHotspotImagesBatch(expiredHotspots);
+    }
     const deletedExpired = await this.prisma.hotspot.deleteMany({
       where: { createdAt: { lt: twoDaysAgo } },
     });
     if (deletedExpired.count > 0) {
-      this.logger.log(`已清理 ${deletedExpired.count} 条过期热点（>2天）`);
+      this.logger.log(`已清理 ${deletedExpired.count} 条过期热点（>2天），图片已同步删除`);
     }
 
     const categories = await this.getCategories();

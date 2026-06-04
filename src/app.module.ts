@@ -14,6 +14,8 @@ import { EnumModule } from './enum/enum.module';
 import { HotspotModule } from './hotspot/hotspot.module';
 import { AiImageModule } from './ai-image/ai-image.module';
 import { WalletModule } from './wallet/wallet.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CleanupService } from './common/service/cleanup.service';
 
 @Module({
   imports: [
@@ -27,10 +29,12 @@ import { WalletModule } from './wallet/wallet.module';
     HotspotModule,
     AiImageModule,
     WalletModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    CleanupService,
     // 全局异常过滤器
     {
       provide: APP_FILTER,

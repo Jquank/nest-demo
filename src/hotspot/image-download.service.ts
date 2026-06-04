@@ -295,4 +295,56 @@ export class ImageDownloadService {
     const next = this.pending.shift();
     if (next) setImmediate(next);
   }
+
+  /**
+   * 删除热点关联的图片文件
+   * @param hotspot 热点对象（需含 imageUrl / localImageUrl / images 字段）
+   */
+  deleteHotspotImages(hotspot: {
+    imageUrl?: string | null;
+    localImageUrl?: string | null;
+    images?: any;
+  }): void {
+    const urls = new Set<string>();
+
+    if (hotspot.imageUrl) urls.add(hotspot.imageUrl);
+    if (hotspot.localImageUrl) urls.add(hotspot.localImageUrl);
+    if (hotspot.images) {
+      try {
+        const arr = typeof hotspot.images === 'string'
+          ? JSON.parse(hotspot.images)
+          : hotspot.images;
+        if (Array.isArray(arr)) arr.forEach((u: string) => urls.add(u));
+      } catch {
+        // ignore parse errors
+      }
+    }
+
+    let deleted = 0;
+    for (const url of urls) {
+      // url 格式如 /uploads/hotspot/1000_xxx.jpg
+      const filename = path.basename(url);
+      const filePath = path.join(this.uploadDir, filename);
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          deleted++;
+        }
+      } catch (err: any) {
+        this.logger.warn(`删除热点图片失败: ${filePath} - ${err.message}`);
+      }
+    }
+    if (deleted > 0) {
+      this.logger.log(`已删除热点图片 ${deleted} 张`);
+    }
+  }
+
+  /**
+   * 批量删除热点图片
+   */
+  deleteHotspotImagesBatch(hotspots: Array<{ imageUrl?: string | null; localImageUrl?: string | null; images?: any }>): void {
+    for (const h of hotspots) {
+      this.deleteHotspotImages(h);
+    }
+  }
 }
