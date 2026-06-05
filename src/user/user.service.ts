@@ -2,8 +2,9 @@ import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto, AdminCreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { SaltOrRounds } from '@/common/constants';
-import { hash as bcryptHash } from 'bcrypt';
+import { hash as bcryptHash, compare as bcryptCompare } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { unlinkSync, existsSync } from 'fs';
 
@@ -38,21 +39,65 @@ export class UserService {
     return parts.join('');
   }
 
+  /** 默认角色的权限（注册用户自动获得） */
+  private readonly DEFAULT_USER_MENUS = [
+    'menu:ai-image',
+    'menu:hotspot',
+    'menu:transaction-history',
+  ];
+
+  /** 获取或创建默认 user 角色 */
+  private async getOrCreateUserRole() {
+    const roleName = 'user';
+    let role = await this.prisma.role.findUnique({
+      where: { name: roleName },
+    });
+    if (!role) {
+      role = await this.prisma.role.create({
+        data: {
+          name: roleName,
+          desc: '普通用户，拥有基础菜单权限',
+          permissions: this.DEFAULT_USER_MENUS,
+        },
+      });
+    }
+    return role;
+  }
+
   async register(createUserDto: CreateUserDto) {
-    let hashedPassword: string;
-    try {
-      hashedPassword = await bcryptHash(createUserDto.password, SaltOrRounds);
-    } catch (err) {
-      throw new Error('Failed to hash password: ' + err);
+    // 检查重名
+    const existed = await this.prisma.user.findUnique({
+      where: { username: createUserDto.username },
+    });
+    if (existed) {
+      throw new BadRequestException('用户名已存在');
     }
 
-    await this.prisma.user.create({
-      data: {
-        ...createUserDto,
-        password: hashedPassword,
-      },
+    const hashedPassword = await bcryptHash(createUserDto.password, SaltOrRounds);
+    const userRole = await this.getOrCreateUserRole();
+
+    // 事务：创建用户 + 绑定角色，保证原子性
+    const user = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          username: createUserDto.username,
+          password: hashedPassword,
+          name: createUserDto.name || createUserDto.username,
+          roles: { connect: [{ id: userRole.id }] },
+        },
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          roles: {
+            select: { id: true, name: true, permissions: true },
+          },
+        },
+      });
+      return created;
     });
-    return null;
+
+    return { ...user, roleName: userRole.name };
   }
 
   // 用户名查询
@@ -229,6 +274,27 @@ export class UserService {
     });
 
     return { newPassword };
+  }
+
+  // ========== 当前用户修改密码 ==========
+
+  async changePassword(userId: number, dto: ChangePasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, password: true },
+    });
+    if (!user) throw new BadRequestException('用户不存在');
+
+    const isValid = await bcryptCompare(dto.oldPassword, user.password || '');
+    if (!isValid) throw new BadRequestException('旧密码错误');
+
+    const hashedPassword = await bcryptHash(dto.newPassword, SaltOrRounds);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { success: true };
   }
 
   // ========== 管理端：删除用户 ==========

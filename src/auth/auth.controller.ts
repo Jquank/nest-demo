@@ -1,5 +1,5 @@
 import { Controller, Body, Post } from '@nestjs/common';
-import { CreateUserDto } from '@/user/dto/create-user.dto';
+import { LoginDto } from '@/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Public } from '@/common/decorator/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -11,7 +11,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
-  login(@Body() createUserDto: CreateUserDto) {
-    return this.authService.login(createUserDto);
+  login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
   }
 }

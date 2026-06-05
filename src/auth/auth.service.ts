@@ -1,7 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { UserService } from '@/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '@/user/dto/create-user.dto';
+import { LoginDto } from '@/user/dto/create-user.dto';
 import { compare as bcryptCompare } from 'bcrypt';
 
 @Injectable()
@@ -11,14 +11,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(createUserDto: CreateUserDto) {
+  async login(dto: LoginDto) {
     const user = await this.userService.findOneByUsername(
-      createUserDto.username,
+      dto.username,
       true,
     );
     if (!user) throw new HttpException('用户名不存在', 400);
     const isPasswordValid = await bcryptCompare(
-      createUserDto.password,
+      dto.password,
       user.password || '',
     );
     if (!isPasswordValid) {

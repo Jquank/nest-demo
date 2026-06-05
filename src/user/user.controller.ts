@@ -15,6 +15,7 @@ import { Public } from '@/common/decorator/public.decorator';
 import { Roles } from '@/common/decorator/roles.decorator';
 import { CreateUserDto, AdminCreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { User } from '@prisma/client';
@@ -95,6 +96,11 @@ export class UserController {
   @Roles('admin')
   resetPassword(@Param('id', ParseIntPipe) id: number) {
     return this.userService.resetPassword(id);
+  }
+
+  @Post('change-password')
+  changePassword(@Req() req: IRequest, @Body() dto: ChangePasswordDto) {
+    return this.userService.changePassword(req.user.id, dto);
   }
 
   @Delete('manage/:id')
