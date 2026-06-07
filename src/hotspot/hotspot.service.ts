@@ -577,11 +577,6 @@ export class HotspotService {
 
     this.logger.log(`共入库 ${allCreated.length} 条新热点`);
 
-    // 第三步：异步为每条新热点生成 AI 配图
-    this.generateImagesForHotspots(allCreated).catch((err) => {
-      this.logger.warn(`后台 AI 生图任务失败: ${err.message}`);
-    });
-
     return { count: allCreated.length, hotspots: allCreated };
   }
 

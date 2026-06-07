@@ -21,6 +21,7 @@ import {
 } from 'fs';
 import { join, extname } from 'path';
 import { WalletService } from '@/wallet/wallet.service';
+import { AiService } from '@/common/service/ai.service';
 import { PRICING } from '@/wallet/wallet.constants';
 
 /**
@@ -108,9 +109,9 @@ const BUILTIN_MODELS = [
 /** 系统级提示词模板（5条） */
 const BUILTIN_PROMPTS: { name: string; content: string }[] = [
   {
-    name: '厚涂油画风格',
+    name: '浅涂油画风格',
     content:
-      '**厚涂写实油画风格**，必须有肉眼可见的油画笔触痕迹——颜料在画布上堆叠、刮擦、揉搓的肌理，在光照区域尤其明显，像油画作家亲手画上去的那种粗粝感和手工感，不要光滑渲染不要摄影质感不要插画平整感。光线有立体感（明暗对比），色彩浓郁有层次，人物和环境有体积感和真实质感。绝对不要卡通/插画/光滑感。场景为19-20世纪初的欧美场景或当代城市/职场/生活场景，人物着装和道具符合时代特征，元素丰富不单调，有人物一个或多个。禁止卡通化、光滑渲染、扁平插画风、纯隐喻无人物、阴暗负面题材。',
+      '**浅涂写实油画风格**，轻度油画笔触，颜料薄涂在画布上的质感，色彩明亮通透，光线柔和自然。人物和环境有立体感和真实质感，不要厚重的颜料堆叠，不要粗粝肌理。场景为现代都市或生活场景，人物着装和道具符合当代特征。色彩以暖色调为主，整体氛围温馨明亮。禁止卡通化、光滑渲染、扁平插画风、阴暗题材。',
   },
   {
     name: '国风水墨意境',
@@ -144,6 +145,7 @@ export class AiImageService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private walletService: WalletService,
+    private aiService: AiService,
   ) {
     this.outputDir = join(process.cwd(), 'uploads', 'ai-images');
     if (!existsSync(this.outputDir)) {
@@ -356,7 +358,7 @@ export class AiImageService implements OnModuleInit {
       return '';
     }
 
-    const apiKey = process.env[modelConfig.apiKeyEnv];
+    const apiKey = this.getApiKey(modelConfig.apiKeyEnv);
     if (!apiKey) {
       this.logger.warn(`${modelConfig.apiKeyEnv} 未配置，跳过 AI 生图`);
       return '';
@@ -436,7 +438,7 @@ export class AiImageService implements OnModuleInit {
     const modelConfig = this.getModelConfig(model.name);
     if (!modelConfig)
       throw new BadRequestException(`模型配置不存在: ${model.name}`);
-    const apiKey = process.env[modelConfig.apiKeyEnv];
+    const apiKey = this.getApiKey(modelConfig.apiKeyEnv);
     if (!apiKey)
       throw new BadRequestException(`${modelConfig.apiKeyEnv} 未配置`);
 
@@ -514,11 +516,51 @@ export class AiImageService implements OnModuleInit {
     return records;
   }
 
+  // ========== AI 润色/生成提示词 ==========
+
+  async refinePrompt(text?: string, userId?: number): Promise<{ prompt: string }> {
+    // 扣费 ¥0.01（1分）
+    if (userId) {
+      try {
+        await this.walletService.consume(userId, 'prompt-refine');
+      } catch (err: any) {
+        throw new BadRequestException(err.message || '余额不足');
+      }
+    }
+    const systemMsg = '你是一个AI生图提示词专家。用户会给你一段描述或空白，你需要输出一段高质量的中文AI生图提示词。直接输出提示词，不要解释。';
+    const userMsg = text?.trim()
+      ? `请润色并扩写这段生图提示词，使其更丰富、更具画面感，适合AI生图模型：\n${text}`
+      : '请随机生成一个高质量的中文AI生图提示词，包含主体、环境、风格、光线、色调等要素，50-100字。';
+    const result = await this.aiService.chat(
+      [
+        { role: 'system', content: systemMsg },
+        { role: 'user', content: userMsg },
+      ],
+      { temperature: 0.8, maxTokens: 1024 },
+    );
+    return { prompt: result.content };
+  }
+
   // ========== 内部工具方法 ==========
 
   /** 根据模型名查找 BUILTIN_MODELS 中的配置 */
   private getModelConfig(name: string) {
     return BUILTIN_MODELS.find((m) => m.name === name);
+  }
+
+  /** 获取 API Key：优先 process.env，失败则从 .env 文件读取 */
+  private getApiKey(envName: string): string | undefined {
+    if (process.env[envName]) return process.env[envName];
+    try {
+      for (const envPath of ['/home/nest-demo/.env', join(process.cwd(), '.env')]) {
+        if (existsSync(envPath)) {
+          const content = readFileSync(envPath, 'utf-8');
+          const match = content.match(new RegExp(`^${envName}=["']?(.+?)["']?$`, 'm'));
+          if (match) return match[1];
+        }
+      }
+    } catch {}
+    return undefined;
   }
 
   /**

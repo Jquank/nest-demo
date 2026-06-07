@@ -19,6 +19,10 @@ export class HttpInterceptor<T> implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<ApiResponse<T>> {
+    const response = context.switchToHttp().getResponse();
+    // API 响应禁止浏览器缓存（数据是动态的）
+    response.setHeader('Cache-Control', 'no-store');
+
     return next.handle().pipe(
       map((data: T) => ({
         code: 0,

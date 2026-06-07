@@ -25,6 +25,7 @@ import { ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { AiService } from '@/common/service/ai.service';
 
 interface IRequest extends Request {
   user: { id: number; username: string; roles?: string[] };
@@ -33,7 +34,10 @@ interface IRequest extends Request {
 @Controller('ai-image')
 @ApiTags('ai-image')
 export class AiImageController {
-  constructor(private readonly aiImageService: AiImageService) {}
+  constructor(
+    private readonly aiImageService: AiImageService,
+    private readonly aiService: AiService,
+  ) {}
 
   // ========== 模型管理 ==========
 
@@ -96,6 +100,13 @@ export class AiImageController {
   @Post('generate')
   generate(@Body() dto: GenerateImageDto, @Req() req: IRequest) {
     return this.aiImageService.generate(dto, req.user?.id);
+  }
+
+  // ========== AI 润色/生成提示词 ==========
+
+  @Post('refine-prompt')
+  refinePrompt(@Body('text') text?: string, @Req() req?: IRequest) {
+    return this.aiImageService.refinePrompt(text, req?.user?.id);
   }
 
   // ========== 参考图片上传 ==========

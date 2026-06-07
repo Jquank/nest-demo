@@ -11,7 +11,7 @@ module.exports = {
       // 用 fork 模式跑 NestJS（commonjs 模块）
       exec_mode: 'fork',
       instances: 1,
-      // 环境变量
+      // 环境变量（服务器上另有完整版含 API Key，部署时不要上传此文件覆盖服务器版本）
       env: {
         NODE_ENV: 'production',
         PORT: 3000,

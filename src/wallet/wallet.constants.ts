@@ -32,6 +32,8 @@ export const PRICING: Record<string, number> = {
   'hotspot-generate': 5,
   'hotspot-refresh': 40,
   'hotspot-refresh-single': 10,
+  // AI 润色提示词（不公开显示）
+  'prompt-refine': 1,
 };
 
 /** 定价描述 */
